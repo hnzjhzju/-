@@ -1,0 +1,1415 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<style>
+  @import url('file:///usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: "Noto Sans CJK SC", "Noto Sans SC", sans-serif;
+    font-size: 10pt;
+    color: #1a1a1a;
+    background: white;
+  }
+
+  /* ── PAGE LAYOUT ── */
+  .page {
+    width: 210mm;
+    min-height: 297mm;
+    padding: 20mm 22mm 20mm 22mm;
+    page-break-after: always;
+    position: relative;
+  }
+  .page:last-child { page-break-after: avoid; }
+
+  /* ── COLORS ── */
+  :root {
+    --navy: #0D2B4E;
+    --blue: #1A5276;
+    --accent: #2471A3;
+    --light: #D6EAF8;
+    --orange: #D35400;
+    --green: #1E8449;
+    --gray: #555;
+    --lgray: #888;
+    --border: #C8D6E5;
+  }
+
+  /* ── COVER PAGE ── */
+  .cover {
+    background: linear-gradient(160deg, #0D2B4E 0%, #1A5276 60%, #2471A3 100%);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 30mm 25mm 25mm 25mm;
+  }
+  .cover-badge {
+    display: inline-block;
+    border: 1.5px solid rgba(255,255,255,0.5);
+    color: rgba(255,255,255,0.8);
+    padding: 3px 12px;
+    font-size: 8pt;
+    letter-spacing: 2px;
+    margin-bottom: 40mm;
+  }
+  .cover-cat {
+    font-size: 11pt;
+    color: #7FB3D3;
+    letter-spacing: 3px;
+    margin-bottom: 8mm;
+    text-transform: uppercase;
+  }
+  .cover-title {
+    font-size: 26pt;
+    font-weight: 900;
+    line-height: 1.25;
+    margin-bottom: 6mm;
+    letter-spacing: 1px;
+  }
+  .cover-subtitle {
+    font-size: 13pt;
+    color: #AED6F1;
+    line-height: 1.5;
+    margin-bottom: 20mm;
+  }
+  .cover-divider {
+    width: 50px;
+    height: 3px;
+    background: #F39C12;
+    margin-bottom: 10mm;
+  }
+  .cover-meta-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6mm;
+    margin-bottom: 15mm;
+  }
+  .cover-meta-item label {
+    display: block;
+    font-size: 7.5pt;
+    color: #7FB3D3;
+    letter-spacing: 1px;
+    margin-bottom: 2px;
+    text-transform: uppercase;
+  }
+  .cover-meta-item span {
+    font-size: 10pt;
+    color: white;
+    font-weight: 600;
+  }
+  .cover-footer {
+    border-top: 1px solid rgba(255,255,255,0.2);
+    padding-top: 6mm;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 8pt;
+    color: rgba(255,255,255,0.5);
+  }
+  .cover-kpi-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 4mm;
+    background: rgba(255,255,255,0.08);
+    border-radius: 4px;
+    padding: 8mm 6mm;
+    margin-bottom: 12mm;
+  }
+  .kpi-box { text-align: center; }
+  .kpi-num {
+    font-size: 22pt;
+    font-weight: 900;
+    color: #F39C12;
+    line-height: 1;
+  }
+  .kpi-unit { font-size: 10pt; color: #AED6F1; margin-left: 2px; }
+  .kpi-label { font-size: 7.5pt; color: #7FB3D3; margin-top: 2px; }
+
+  /* ── TOC PAGE ── */
+  .toc-title {
+    font-size: 18pt;
+    font-weight: 800;
+    color: var(--navy);
+    border-bottom: 3px solid var(--accent);
+    padding-bottom: 4mm;
+    margin-bottom: 10mm;
+  }
+  .toc-item {
+    display: flex;
+    align-items: baseline;
+    padding: 3.5mm 0;
+    border-bottom: 1px dashed var(--border);
+  }
+  .toc-num { font-weight: 700; color: var(--accent); width: 20mm; flex-shrink: 0; font-size: 10.5pt; }
+  .toc-text { flex: 1; color: var(--navy); font-size: 10.5pt; }
+  .toc-page { font-size: 9pt; color: var(--lgray); }
+  .toc-sub {
+    display: flex;
+    align-items: baseline;
+    padding: 2mm 0 2mm 20mm;
+    border-bottom: 1px dashed #eee;
+  }
+  .toc-sub .toc-num { width: 16mm; font-weight: 400; color: var(--gray); font-size: 9.5pt; }
+  .toc-sub .toc-text { color: var(--gray); font-size: 9.5pt; }
+  .toc-note {
+    margin-top: 10mm;
+    background: var(--light);
+    border-left: 4px solid var(--accent);
+    padding: 5mm 6mm;
+    font-size: 9pt;
+    color: var(--gray);
+    line-height: 1.7;
+  }
+
+  /* ── CONTENT PAGES ── */
+  .section-header {
+    background: var(--navy);
+    color: white;
+    padding: 5mm 7mm;
+    margin-bottom: 7mm;
+    display: flex;
+    align-items: center;
+    gap: 4mm;
+  }
+  .section-num {
+    font-size: 22pt;
+    font-weight: 900;
+    color: #F39C12;
+    line-height: 1;
+  }
+  .section-title-wrap {}
+  .section-en { font-size: 7.5pt; color: #7FB3D3; letter-spacing: 1px; text-transform: uppercase; }
+  .section-zh { font-size: 14pt; font-weight: 800; }
+
+  h3 {
+    font-size: 11pt;
+    font-weight: 700;
+    color: var(--blue);
+    margin: 6mm 0 3mm 0;
+    padding-left: 3mm;
+    border-left: 3px solid var(--accent);
+  }
+  h4 {
+    font-size: 10pt;
+    font-weight: 700;
+    color: var(--navy);
+    margin: 4mm 0 2mm 0;
+  }
+  p {
+    line-height: 1.8;
+    color: #333;
+    margin-bottom: 3mm;
+    font-size: 9.5pt;
+  }
+
+  /* ── CALLOUT BOX ── */
+  .callout {
+    background: var(--light);
+    border-left: 4px solid var(--accent);
+    padding: 4mm 5mm;
+    margin: 4mm 0;
+    line-height: 1.7;
+    font-size: 9.5pt;
+    color: #333;
+  }
+  .callout-warn {
+    background: #FEF9E7;
+    border-left: 4px solid #F39C12;
+  }
+  .callout-success {
+    background: #EAFAF1;
+    border-left: 4px solid var(--green);
+  }
+
+  /* ── TABLES ── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 4mm 0;
+    font-size: 9pt;
+  }
+  thead tr { background: var(--navy); color: white; }
+  thead th { padding: 3mm 4mm; text-align: left; font-weight: 600; font-size: 9pt; }
+  tbody tr:nth-child(even) { background: #F4F8FB; }
+  tbody tr:nth-child(odd) { background: white; }
+  tbody td { padding: 2.5mm 4mm; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .td-center { text-align: center; }
+  .td-right { text-align: right; }
+  .highlight-row td { background: #FEF9E7 !important; font-weight: 600; color: var(--orange); }
+  .total-row td { background: var(--navy) !important; color: white !important; font-weight: 700; }
+
+  /* ── KPI CARDS ── */
+  .kpi-row {
+    display: grid;
+    gap: 4mm;
+    margin: 5mm 0;
+  }
+  .kpi-row-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .kpi-row-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+  .kpi-card {
+    background: var(--navy);
+    color: white;
+    padding: 5mm;
+    border-radius: 3px;
+    text-align: center;
+  }
+  .kpi-card .num { font-size: 20pt; font-weight: 900; color: #F39C12; line-height: 1.1; }
+  .kpi-card .unit { font-size: 9pt; color: #AED6F1; }
+  .kpi-card .lbl { font-size: 8pt; color: #7FB3D3; margin-top: 1mm; }
+  .kpi-card-light {
+    background: var(--light);
+    color: var(--navy);
+    padding: 5mm;
+    border-radius: 3px;
+    text-align: center;
+    border: 1px solid var(--border);
+  }
+  .kpi-card-light .num { font-size: 18pt; font-weight: 900; color: var(--accent); line-height: 1.1; }
+  .kpi-card-light .unit { font-size: 9pt; color: var(--blue); }
+  .kpi-card-light .lbl { font-size: 8pt; color: var(--gray); margin-top: 1mm; }
+
+  /* ── PAIN POINT CARDS ── */
+  .pain-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4mm;
+    margin: 4mm 0;
+  }
+  .pain-card {
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 5mm;
+    position: relative;
+  }
+  .pain-icon {
+    font-size: 18pt;
+    margin-bottom: 2mm;
+  }
+  .pain-title {
+    font-size: 9.5pt;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 2mm;
+  }
+  .pain-body { font-size: 8.5pt; color: var(--gray); line-height: 1.7; }
+  .pain-tag {
+    display: inline-block;
+    background: #FADBD8;
+    color: #922B21;
+    font-size: 7.5pt;
+    padding: 1px 6px;
+    border-radius: 2px;
+    margin-top: 2mm;
+  }
+
+  /* ── ARCHITECTURE DIAGRAM (SVG) ── */
+  .diagram-wrap {
+    background: #F8FBFE;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 5mm;
+    margin: 4mm 0;
+    text-align: center;
+  }
+
+  /* ── TIMELINE / GANTT ── */
+  .gantt-wrap {
+    margin: 4mm 0;
+    overflow: hidden;
+  }
+  .gantt-row {
+    display: grid;
+    grid-template-columns: 48mm 1fr;
+    gap: 0;
+    margin-bottom: 3mm;
+    align-items: center;
+  }
+  .gantt-label {
+    font-size: 8.5pt;
+    color: var(--navy);
+    padding-right: 4mm;
+    font-weight: 600;
+  }
+  .gantt-bar-wrap {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 1px;
+    height: 8mm;
+  }
+  .gantt-cell { background: #eee; height: 100%; }
+  .gantt-active { background: var(--accent); }
+  .gantt-active-2 { background: #2E86C1; }
+  .gantt-active-3 { background: var(--green); }
+  .gantt-active-4 { background: #D35400; }
+  .gantt-weeks {
+    display: grid;
+    grid-template-columns: 48mm 1fr;
+    margin-bottom: 2mm;
+  }
+  .gantt-weeks-inner {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 1px;
+  }
+  .gantt-week-label {
+    font-size: 7pt;
+    color: var(--lgray);
+    text-align: center;
+  }
+
+  /* ── ROI TABLE ── */
+  .roi-summary {
+    background: linear-gradient(135deg, var(--navy), var(--blue));
+    color: white;
+    padding: 6mm 8mm;
+    border-radius: 4px;
+    margin: 5mm 0;
+  }
+  .roi-summary h4 { color: #F39C12; font-size: 11pt; margin-bottom: 4mm; }
+  .roi-summary .roi-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 4mm;
+  }
+  .roi-item label { font-size: 7.5pt; color: #7FB3D3; display: block; margin-bottom: 1mm; }
+  .roi-item span { font-size: 14pt; font-weight: 800; color: #F39C12; }
+  .roi-item small { font-size: 8.5pt; color: #AED6F1; margin-left: 2px; }
+
+  /* ── PROGRESS BAR ── */
+  .bar-row {
+    margin: 3mm 0;
+    display: grid;
+    grid-template-columns: 55mm 1fr 22mm;
+    gap: 3mm;
+    align-items: center;
+  }
+  .bar-label { font-size: 8.5pt; color: var(--navy); }
+  .bar-track { background: #E8EEF4; height: 5mm; border-radius: 2px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 2px; }
+  .bar-pct { font-size: 8.5pt; font-weight: 700; color: var(--accent); text-align: right; }
+
+  /* ── PAGE HEADER / FOOTER ── */
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 4mm;
+    border-bottom: 2px solid var(--navy);
+    margin-bottom: 7mm;
+  }
+  .page-header-title { font-size: 8pt; color: var(--lgray); }
+  .page-header-logo { font-size: 9pt; font-weight: 800; color: var(--navy); letter-spacing: 1px; }
+  .page-footer {
+    position: absolute;
+    bottom: 8mm;
+    left: 22mm;
+    right: 22mm;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--border);
+    padding-top: 3mm;
+    font-size: 7.5pt;
+    color: var(--lgray);
+  }
+
+  /* ── MISC ── */
+  .tag {
+    display: inline-block;
+    background: var(--light);
+    color: var(--blue);
+    font-size: 7.5pt;
+    padding: 1px 7px;
+    border-radius: 2px;
+    margin: 1px;
+    border: 1px solid var(--border);
+  }
+  .tag-orange { background: #FEF0E7; color: #D35400; border-color: #FAD7A0; }
+  .tag-green { background: #EAFAF1; color: #1E8449; border-color: #A9DFBF; }
+  ul.custom-list { list-style: none; padding: 0; margin: 2mm 0; }
+  ul.custom-list li {
+    padding: 1.5mm 0 1.5mm 5mm;
+    border-bottom: 1px solid #F0F4F8;
+    font-size: 9.5pt;
+    color: #333;
+    line-height: 1.7;
+    position: relative;
+  }
+  ul.custom-list li::before {
+    content: "▸";
+    color: var(--accent);
+    position: absolute;
+    left: 0;
+    font-size: 8pt;
+  }
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6mm;
+  }
+  .three-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 4mm;
+  }
+  .label-value { margin: 2mm 0; font-size: 9.5pt; }
+  .label-value strong { color: var(--navy); font-weight: 700; }
+  .label-value span { color: #333; margin-left: 2mm; }
+  .chip-row { margin: 3mm 0; }
+  .note { font-size: 8pt; color: var(--lgray); font-style: italic; margin-top: 2mm; }
+
+  @media print {
+    body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .page { margin: 0; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════
+     PAGE 1 · COVER
+═══════════════════════════════════════════════════════ -->
+<div class="page cover">
+  <div>
+    <div class="cover-badge">解决方案建议书　SOLUTION PROPOSAL</div>
+    <div class="cover-cat">港口基础设施安全管理</div>
+    <div class="cover-title">鼠浪湖矿石码头<br>智能无人机巡检<br>解决方案</div>
+    <div class="cover-subtitle">基于低空感知技术的港口大型基础设施<br>自动化安全监测与智能缺陷识别系统</div>
+    <div class="cover-divider"></div>
+  </div>
+
+  <div>
+    <div class="cover-kpi-row">
+      <div class="kpi-box">
+        <div class="kpi-num">75<span class="kpi-unit">%</span></div>
+        <div class="kpi-label">巡检时效提升</div>
+      </div>
+      <div class="kpi-box">
+        <div class="kpi-num">85<span class="kpi-unit">%</span></div>
+        <div class="kpi-label">高空作业风险降低</div>
+      </div>
+      <div class="kpi-box">
+        <div class="kpi-num">368<span class="kpi-unit">万</span></div>
+        <div class="kpi-label">年化综合节省</div>
+      </div>
+    </div>
+    <div class="cover-meta-grid">
+      <div class="cover-meta-item"><label>目标客户</label><span>宁波舟山港集团·鼠浪湖矿石码头</span></div>
+      <div class="cover-meta-item"><label>文档版本</label><span>V1.0　2026-02-10</span></div>
+      <div class="cover-meta-item"><label>方案类型</label><span>港口基础设施智能巡检</span></div>
+      <div class="cover-meta-item"><label>作者</label><span>张家豪　解决方案工程师</span></div>
+    </div>
+    <div class="cover-footer">
+      <span>本文档包含商业敏感信息，仅供授权人员阅览</span>
+      <span>CONFIDENTIAL</span>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     PAGE 2 · TABLE OF CONTENTS
+═══════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-header">
+    <span class="page-header-title">鼠浪湖矿石码头智能无人机巡检解决方案</span>
+    <span class="page-header-logo">目 录</span>
+  </div>
+
+  <div class="toc-title">目　录</div>
+
+  <div class="toc-item">
+    <span class="toc-num">执行摘要</span>
+    <span class="toc-text">Executive Summary</span>
+    <span class="toc-page">3</span>
+  </div>
+  <div class="toc-item">
+    <span class="toc-num">第一章</span>
+    <span class="toc-text">项目背景与客户现状</span>
+    <span class="toc-page">4</span>
+  </div>
+  <div class="toc-sub">
+    <span class="toc-num">1.1</span>
+    <span class="toc-text">宁波舟山港·鼠浪湖矿石码头概况</span>
+    <span class="toc-page">4</span>
+  </div>
+  <div class="toc-sub">
+    <span class="toc-num">1.2</span>
+    <span class="toc-text">巡检管理现状</span>
+    <span class="toc-page">4</span>
+  </div>
+  <div class="toc-item">
+    <span class="toc-num">第二章</span>
+    <span class="toc-text">核心痛点分析</span>
+    <span class="toc-page">5</span>
+  </div>
+  <div class="toc-item">
+    <span class="toc-num">第三章</span>
+    <span class="toc-text">解决方案总览</span>
+    <span class="toc-page">6</span>
+  </div>
+  <div class="toc-sub">
+    <span class="toc-num">3.1</span>
+    <span class="toc-text">方案架构</span>
+    <span class="toc-page">6</span>
+  </div>
+  <div class="toc-sub">
+    <span class="toc-num">3.2</span>
+    <span class="toc-text">无人机机型配置方案</span>
+    <span class="toc-page">7</span>
+  </div>
+  <div class="toc-item">
+    <span class="toc-num">第四章</span>
+    <span class="toc-text">技术方案详解</span>
+    <span class="toc-page">7</span>
+  </div>
+  <div class="toc-sub">
+    <span class="toc-num">4.1</span>
+    <span class="toc-text">巡检作业规划</span>
+    <span class="toc-page">7</span>
+  </div>
+  <div class="toc-sub">
+    <span class="toc-num">4.2</span>
+    <span class="toc-text">AI 智能缺陷识别</span>
+    <span class="toc-page">8</span>
+  </div>
+  <div class="toc-sub">
+    <span class="toc-num">4.3</span>
+    <span class="toc-text">数据管理与报告平台</span>
+    <span class="toc-page">8</span>
+  </div>
+  <div class="toc-item">
+    <span class="toc-num">第五章</span>
+    <span class="toc-text">实施计划（12周）</span>
+    <span class="toc-page">9</span>
+  </div>
+  <div class="toc-item">
+    <span class="toc-num">第六章</span>
+    <span class="toc-text">投资回报分析（ROI）</span>
+    <span class="toc-page">10</span>
+  </div>
+  <div class="toc-item">
+    <span class="toc-num">附录</span>
+    <span class="toc-text">相关标准与参考资料</span>
+    <span class="toc-page">11</span>
+  </div>
+
+  <div class="toc-note">
+    <strong>关于本文档：</strong>本方案基于宁波舟山港鼠浪湖矿石码头的公开资料及港口行业通行技术标准编制，旨在说明低空感知技术替代传统人工巡检的完整解决路径。方案中涉及的参数数据均为基于行业基准的测算值，可在现场勘查后进行针对性调整。
+  </div>
+
+  <div class="page-footer">
+    <span>张家豪 · 解决方案工程师 · 2026-02</span>
+    <span>第 2 页 / 共 11 页</span>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     PAGE 3 · EXECUTIVE SUMMARY
+═══════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-header">
+    <span class="page-header-title">鼠浪湖矿石码头智能无人机巡检解决方案</span>
+    <span class="page-header-logo">执行摘要</span>
+  </div>
+
+  <div class="section-header">
+    <div class="section-num">ES</div>
+    <div class="section-title-wrap">
+      <div class="section-en">Executive Summary</div>
+      <div class="section-zh">执行摘要</div>
+    </div>
+  </div>
+
+  <p>宁波舟山港鼠浪湖矿石码头是全球单体规模最大的铁矿石中转基地之一，拥有逾3.6公里的防波堤岸线、4台大型卸船机、多条高架输送栈桥及总储量超450万吨的储矿场。如此大体量的基础设施意味着巨大的安全维护压力——<strong>岸桥高空作业风险、防波堤全线步行巡检效率低下、设备缺陷数据纸质化、台风天气窗口期被迫停巡</strong>，已成为制约港口安全管理数字化升级的核心瓶颈。</p>
+
+  <p>本方案提出以工业级无人机为核心感知终端，结合 AI 视觉缺陷识别模型与云端数据管理平台，构建「飞行作业规划 → 自主巡检采集 → 智能分析识别 → 数字化报告输出」的全流程智能巡检体系，全面替代传统人工高空巡检模式。</p>
+
+  <div class="kpi-row kpi-row-4" style="margin:6mm 0;">
+    <div class="kpi-card">
+      <div class="num">75<span class="unit">%↑</span></div>
+      <div class="lbl">单次巡检时效提升</div>
+    </div>
+    <div class="kpi-card">
+      <div class="num">85<span class="unit">%↓</span></div>
+      <div class="lbl">高空人工作业次数减少</div>
+    </div>
+    <div class="kpi-card">
+      <div class="num">92<span class="unit">%</span></div>
+      <div class="lbl">AI 缺陷识别准确率</div>
+    </div>
+    <div class="kpi-card">
+      <div class="num">1.8<span class="unit">年</span></div>
+      <div class="lbl">预计投资回收期</div>
+    </div>
+  </div>
+
+  <h3>方案核心亮点</h3>
+  <ul class="custom-list">
+    <li><strong>全要素覆盖：</strong>一套方案覆盖岸桥结构、防波堤、输送栈桥、储矿场边坡四类设施，无需分系统采购；</li>
+    <li><strong>零停产实施：</strong>无人机巡检可在港口正常作业期间并行开展，不影响卸船机及输送系统运行；</li>
+    <li><strong>合规落地：</strong>飞行作业设计符合《低空飞行管理暂行条例》及《港口区域无人机应用指南》，具备向主管部门报备的完整材料；</li>
+    <li><strong>数据闭环：</strong>巡检报告自动生成，缺陷记录与 CMMS（设备维护管理系统）对接，支持基于数据的预防性维护决策；</li>
+    <li><strong>可扩展性：</strong>平台架构支持后续扩展至港区船舶引导、气象监测、安防巡逻等低空应用场景。</li>
+  </ul>
+
+  <div class="callout callout-success" style="margin-top:5mm;">
+    <strong>建议快速决策的理由：</strong>中国低空经济管理体系（2024年《低空飞行管理暂行条例》）已为港口无人机作业提供明确的监管框架；国内多个主要港口（青岛港、天津港）已完成类似系统的试点验证，宁波舟山港作为行业标杆，推进此类升级将同时满足安全生产数字化的监管要求与降本增效的经营诉求。
+  </div>
+
+  <div class="page-footer">
+    <span>张家豪 · 解决方案工程师 · 2026-02</span>
+    <span>第 3 页 / 共 11 页</span>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     PAGE 4 · CHAPTER 1 - BACKGROUND
+═══════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-header">
+    <span class="page-header-title">鼠浪湖矿石码头智能无人机巡检解决方案</span>
+    <span class="page-header-logo">第一章 · 项目背景</span>
+  </div>
+
+  <div class="section-header">
+    <div class="section-num">01</div>
+    <div class="section-title-wrap">
+      <div class="section-en">Background &amp; Current Situation</div>
+      <div class="section-zh">项目背景与客户现状</div>
+    </div>
+  </div>
+
+  <h3>1.1　宁波舟山港·鼠浪湖矿石码头概况</h3>
+
+  <p>宁波舟山港是全球吞吐量最大的港口，2023年货物吞吐量超过<strong>13.2亿吨</strong>。鼠浪湖矿石码头隶属宁波舟山港集团，位于舟山市嵊泗县鼠浪湖岛，是华东地区最重要的铁矿石转运枢纽，年转运量约<strong>5,000万吨</strong>，服务于马钢、杭钢、宝钢等国内大型钢铁企业。</p>
+
+  <div class="kpi-row kpi-row-4" style="margin: 4mm 0 6mm 0;">
+    <div class="kpi-card-light">
+      <div class="num">4<span class="unit"> 座</span></div>
+      <div class="lbl">10万吨级矿石泊位</div>
+    </div>
+    <div class="kpi-card-light">
+      <div class="num">450<span class="unit">万吨</span></div>
+      <div class="lbl">矿石储存总量</div>
+    </div>
+    <div class="kpi-card-light">
+      <div class="num">3.6<span class="unit"> km</span></div>
+      <div class="lbl">防波堤/岸线总长</div>
+    </div>
+    <div class="kpi-card-light">
+      <div class="num">28<span class="unit"> m</span></div>
+      <div class="lbl">卸船机最大悬臂高度</div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div>
+      <h4>主要基础设施清单</h4>
+      <table>
+        <thead><tr><th>设施类型</th><th>数量/规模</th><th>检查重点</th></tr></thead>
+        <tbody>
+          <tr><td>大型卸船机</td><td>4台，悬臂高28m</td><td>结构焊缝、钢丝绳、轨道</td></tr>
+          <tr><td>输送栈桥</td><td>总长约2.1km</td><td>托架腐蚀、皮带老化</td></tr>
+          <tr><td>防波堤护坡</td><td>总长3.6km</td><td>块石位移、沉降、冲刷</td></tr>
+          <tr><td>储矿场边坡</td><td>4个堆场</td><td>坡面滑移、植被侵入</td></tr>
+          <tr><td>装卸设备基础</td><td>多处</td><td>基础沉降、裂缝发展</td></tr>
+          <tr><td>照明及监控塔</td><td>32套</td><td>倾斜、锈蚀、连接松动</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div>
+      <h4>巡检管理现状</h4>
+      <ul class="custom-list">
+        <li>常规巡检频率：卸船机每月1次全面检查，防波堤每季度1次；</li>
+        <li>卸船机悬臂高空检查：需申请停机、搭设临时脚手架，单次准备约6-8小时；</li>
+        <li>防波堤步行巡检：3.6km全程约需4-5人天，受台风/涌浪天气频繁中断；</li>
+        <li>巡检记录以纸质表格为主，缺陷记录不可追溯，历史趋势难以分析；</li>
+        <li>2022-2024年因设备缺陷处置不及时引发的计划外停工3次，累计影响吞吐量约40万吨。</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>1.2　安全监管压力</h3>
+  <p>交通运输部2023年发布的《港口安全生产数字化转型行动方案》明确要求，全国主要港口应在2025年底前建立覆盖主要设备设施的在线监测能力，鼓励引入无人机、传感器等新技术手段替代高风险人工作业。</p>
+
+  <div class="callout callout-warn">
+    <strong>合规风险提示：</strong>现行《特种设备安全法》要求港口起重机械（含卸船机）进行定期专项检验，若因人工检查条件限制导致检验记录不完整，将面临监管处罚风险。无人机辅助检验已被多个省级特种设备检验机构接受为合法检测手段。
+  </div>
+
+  <div class="page-footer">
+    <span>张家豪 · 解决方案工程师 · 2026-02</span>
+    <span>第 4 页 / 共 11 页</span>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     PAGE 5 · CHAPTER 2 - PAIN POINTS
+═══════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-header">
+    <span class="page-header-title">鼠浪湖矿石码头智能无人机巡检解决方案</span>
+    <span class="page-header-logo">第二章 · 核心痛点</span>
+  </div>
+
+  <div class="section-header">
+    <div class="section-num">02</div>
+    <div class="section-title-wrap">
+      <div class="section-en">Pain Point Analysis</div>
+      <div class="section-zh">核心痛点分析</div>
+    </div>
+  </div>
+
+  <div class="pain-grid">
+    <div class="pain-card">
+      <div class="pain-icon">⚠️</div>
+      <div class="pain-title">高空作业安全风险高</div>
+      <div class="pain-body">卸船机悬臂最高达28米，人工检查需要高空作业许可证、安全绳及专业架设设备。2023年港口行业高空作业事故率是一般工种的3.2倍，每次高空巡检涉及4-6名有资质人员，时间成本与安全风险均高。</div>
+      <div><span class="pain-tag">安全风险</span> <span class="pain-tag">合规压力</span></div>
+    </div>
+    <div class="pain-card">
+      <div class="pain-icon">⏱️</div>
+      <div class="pain-title">防波堤巡检效率极低</div>
+      <div class="pain-body">3.6公里防波堤需要人员步行全程，单次完整巡检耗时约4小时（2人组），每季度一次的频率意味着相邻检查间隔长达90天，台风季涌浪导致的被迫停巡进一步拉长实际检查间隔，早期隐患往往无法及时发现。</div>
+      <div><span class="pain-tag">低效率</span> <span class="pain-tag">覆盖盲区</span></div>
+    </div>
+    <div class="pain-card">
+      <div class="pain-icon">📋</div>
+      <div class="pain-title">巡检数据孤岛，无法追溯</div>
+      <div class="pain-body">现有巡检记录以纸质表格为主，缺陷照片采用手机本地存储，无法与设备档案关联。历史缺陷发展趋势无法可视化分析，缺陷从发现到下达维修指令平均周转时间长达5-7个工作日，延误时机。</div>
+      <div><span class="pain-tag">数字化缺失</span> <span class="pain-tag">决策滞后</span></div>
+    </div>
+    <div class="pain-card">
+      <div class="pain-icon">🌪️</div>
+      <div class="pain-title">恶劣天气窗口期长，停巡频繁</div>
+      <div class="pain-body">舟山群岛年均台风及强风天气约45-60天，加上涌浪导致的防波堤区域禁入，全年实际可用巡检窗口不足280天。部分关键节点（台风后须紧急评估结构完整性）反而因安全限制无法立即实施人工巡检。</div>
+      <div><span class="pain-tag">窗口受限</span> <span class="pain-tag">应急响应慢</span></div>
+    </div>
+  </div>
+
+  <h3>量化影响分析</h3>
+
+  <table style="margin-top:4mm;">
+    <thead>
+      <tr>
+        <th>痛点维度</th>
+        <th>当前状态</th>
+        <th>年度量化损失</th>
+        <th>解决优先级</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>高空作业成本</td>
+        <td>4台卸船机，月检一次，每次6人×8小时</td>
+        <td>人力成本约96万元/年</td>
+        <td class="td-center"><span class="tag-orange" style="display:inline-block;background:#FADBD8;color:#922B21;padding:1px 8px;font-size:8pt;">高</span></td>
+      </tr>
+      <tr>
+        <td>防波堤步行巡检</td>
+        <td>季度1次，2人×4小时/次</td>
+        <td>人力成本约12万元/年</td>
+        <td class="td-center"><span class="tag-orange" style="display:inline-block;background:#FADBD8;color:#922B21;padding:1px 8px;font-size:8pt;">中</span></td>
+      </tr>
+      <tr>
+        <td>计划外停工损失</td>
+        <td>近三年平均1次/年，单次停工约2天</td>
+        <td>间接损失约200-300万元/年</td>
+        <td class="td-center"><span class="tag-orange" style="display:inline-block;background:#FADBD8;color:#922B21;padding:1px 8px;font-size:8pt;">高</span></td>
+      </tr>
+      <tr>
+        <td>临时脚手架搭设</td>
+        <td>每次深度检查需外包搭设</td>
+        <td>外包费用约60万元/年</td>
+        <td class="td-center"><span class="tag-orange" style="display:inline-block;background:#FADBD8;color:#922B21;padding:1px 8px;font-size:8pt;">高</span></td>
+      </tr>
+      <tr class="highlight-row">
+        <td><strong>综合年度损失合计</strong></td>
+        <td>—</td>
+        <td><strong>约368-468万元/年</strong></td>
+        <td class="td-center">—</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout" style="margin-top:4mm;">
+    上述估算基于行业公开薪资水平（港口安全检验人员约250元/人天）及计划外停工的吞吐量损失（鼠浪湖矿石码头单日处理能力约13.7万吨，参考铁矿石港口装卸费用约15元/吨）进行测算，实际损失可在现场核实后调整。
+  </div>
+
+  <div class="page-footer">
+    <span>张家豪 · 解决方案工程师 · 2026-02</span>
+    <span>第 5 页 / 共 11 页</span>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     PAGE 6 · CHAPTER 3 - SOLUTION OVERVIEW
+═══════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-header">
+    <span class="page-header-title">鼠浪湖矿石码头智能无人机巡检解决方案</span>
+    <span class="page-header-logo">第三章 · 方案总览</span>
+  </div>
+
+  <div class="section-header">
+    <div class="section-num">03</div>
+    <div class="section-title-wrap">
+      <div class="section-en">Solution Overview</div>
+      <div class="section-zh">解决方案总览</div>
+    </div>
+  </div>
+
+  <h3>3.1　方案架构</h3>
+  <p>本方案采用「终端感知层 → 数据传输层 → 智能处理层 → 应用决策层」四层架构，将无人机作为移动传感器终端，通过5G/4G回传采集数据，经AI平台处理后输出结构化巡检报告并对接维护系统。</p>
+
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 680 260" xmlns="http://www.w3.org/2000/svg" width="100%">
+      <!-- background -->
+      <rect width="680" height="260" fill="#F8FBFE"/>
+
+      <!-- Layer boxes -->
+      <!-- Layer 1: 终端感知层 -->
+      <rect x="10" y="10" width="152" height="240" rx="5" fill="#0D2B4E" opacity="0.9"/>
+      <text x="86" y="32" font-family="Noto Sans CJK SC,sans-serif" font-size="9" fill="#7FB3D3" text-anchor="middle" letter-spacing="1">终端感知层</text>
+      <text x="86" y="46" font-family="Noto Sans CJK SC,sans-serif" font-size="8" fill="#AED6F1" text-anchor="middle">Sensing Layer</text>
+      <!-- Drone icons -->
+      <rect x="22" y="60" width="128" height="40" rx="4" fill="#1A5276" opacity="0.8"/>
+      <text x="86" y="76" font-family="Noto Sans CJK SC,sans-serif" font-size="9" fill="white" text-anchor="middle" font-weight="bold">多旋翼巡检无人机</text>
+      <text x="86" y="90" font-family="Noto Sans CJK SC,sans-serif" font-size="8" fill="#AED6F1" text-anchor="middle">可见光+热成像+激光雷达</text>
+      <rect x="22" y="110" width="128" height="40" rx="4" fill="#1A5276" opacity="0.8"/>
+      <text x="86" y="126" font-family="Noto Sans CJK SC,sans-serif" font-size="9" fill="white" text-anchor="middle" font-weight="bold">固定翼测绘无人机</text>
+      <text x="86" y="140" font-family="Noto Sans CJK SC,sans-serif" font-size="8" fill="#AED6F1" text-anchor="middle">倾斜摄影·大范围覆盖</text>
+      <rect x="22" y="160" width="128" height="40" rx="4" fill="#1A5276" opacity="0.8"/>
+      <text x="86" y="176" font-family="Noto Sans CJK SC,sans-serif" font-size="9" fill="white" text-anchor="middle" font-weight="bold">机巢（自动充电桩）</text>
+      <text x="86" y="190" font-family="Noto Sans CJK SC,sans-serif" font-size="8" fill="#AED6F1" text-anchor="middle">固定部署·全天候待命</text>
+      <rect x="22" y="210" width="128" height="30" rx="4" fill="#F39C12" opacity="0.9"/>
+      <text x="86" y="229" font-family="Noto Sans CJK SC,sans-serif" font-size="9" fill="white" text-anchor="middle" font-weight="bold">RTK 高精度定位模块</text>
+
+      <!-- arrows 1→2 -->
+      <polygon points="172,130 186,124 186,136" fill="#2471A3"/>
+      <line x1="162" y1="130" x2="186" y2="130" stroke="#2471A3" stroke-width="2"/>
+
+      <!-- Layer 2: 数据传输层 -->
+      <rect x="188" y="10" width="120" height="240" rx="5" fill="#1A5276" opacity="0.85"/>
+      <text x="248" y="32" font-family="Noto Sans CJK SC,sans-serif" font-size="9" fill="#7FB3D3" text-anchor="middle" letter-spacing="1">数据传输层</text>
+      <text x="248" y="46" font-family="Noto Sans CJK SC,sans-serif" font-size="8" fill="#AED6F1" text-anchor="middle">Transmission Layer</text>
+      <rect x="200" y="60" width="96" height="35" rx="4" fill="#2E86C1" opacity="0.8"/>
+      <text x="248" y="82" font-family="Noto Sans CJK SC,sans-serif" font-size="9" fill="white" text-anchor="middle" font-weight="bold">5G 图传链路</text>
+      <rect x="200" y="105" width="96" height="35" rx="4" fill="#2E86C1" opacity="0.8"/>
+      <text x="248" y="127" font-family="Noto Sans CJK SC,sans-serif" font-size="9" fill="white" text-anchor="middle" font-weight="bold">加密数传通道</text>
+      <rect x="200" y="150" width="96" height="35" rx="4" fill="#2E86C1" opacity="0.8"/>
+      <text x="248" y="172" font-family="Noto Sans CJK SC,sans-serif" font-size="9" fill="white" text-anchor="middle" font-weight="bold">局域网备份</text>
+      <rect x="200" y="195" width="96" height="40" rx="4" fill="#17A589" opacity="0.8"/>
+      <text x="248" y="211" font-family="Noto Sans CJK SC,sans-serif" font-size="9" fill="white" text-anchor="middle" font-weight="bold">实时遥测</text>
+      <text x="248" y="225" font-family="Noto Sans CJK SC,sans-serif" font-size="8" fill="#D5F5E3" text-anchor="middle">飞行状态监控</text>
+
+      <!-- arrows 2→3 -->
+      <polygon points="318,130 332,124 332,136" fill="#2471A3"/>
+      <line x1="308" y1="130" x2="332" y2="130" stroke="#2471A3" stroke-width="2"/>
+
+      <!-- Layer 3: 智能处理层 -->
+      <rect x="334" y="10" width="162" height="240" rx="5" fill="#1E5799" opacity="0.8"/>
+      <text x="415" y="32" font-family="Noto Sans CJK SC,sans-serif" font-size="9" fill="#7FB3D3" text-anchor="middle" letter-spacing="1">智能处理层</text>
+      <text x="415" y="46" font-family="Noto Sans CJK SC,sans-serif" font-size="8" fill="#AED6F1" text-anchor="middle">Intelligence Layer</text>
+      <rect x="346" y="60" width="138" height="40" rx="4" fill="#8E44AD" opacity="0.9"/>
+      <text x="415" y="76" font-family="Noto Sans CJK SC,sans-serif" font-size="9" fill="white" text-anchor="middle" font-weight="bold">AI 视觉缺陷识别引擎</text>
+      <text x="415" y="90" font-family="Noto Sans CJK SC,sans-serif" font-size="8" fill="#E8DAEF" text-anchor="middle">裂缝/腐蚀/变形/沉降</text>
+      <rect x="346" y="110" width="138" height="35" rx="4" fill="#27AE60" opacity="0.8"/>
+      <text x="415" y="132" font-family="Noto Sans CJK SC,sans-serif" font-size="9" fill="white" text-anchor="middle" font-weight="bold">三维点云重建模型</text>
+      <rect x="346" y="155" width="138" height="35" rx="4" fill="#2980B9" opacity="0.8"/>
+      <text x="415" y="177" font-family="Noto Sans CJK SC,sans-serif" font-size="9" fill="white" text-anchor="middle" font-weight="bold">正射影像处理</text>
+      <rect x="346" y="200" width="138" height="40" rx="4" fill="#D35400" opacity="0.9"/>
+      <text x="415" y="216" font-family="Noto Sans CJK SC,sans-serif" font-size="9" fill="white" text-anchor="middle" font-weight="bold">缺陷等级评分模型</text>
+      <text x="415" y="230" font-family="Noto Sans CJK SC,sans-serif" font-size="8" fill="#FDEBD0" text-anchor="middle">自动预警·分级处置</text>
+
+      <!-- arrows 3→4 -->
+      <polygon points="506,130 520,124 520,136" fill="#2471A3"/>
+      <line x1="496" y1="130" x2="520" y2="130" stroke="#2471A3" stroke-width="2"/>
+
+      <!-- Layer 4: 应用决策层 -->
+      <rect x="522" y="10" width="148" height="240" rx="5" fill="#0D2B4E" opacity="0.9"/>
+      <text x="596" y="32" font-family="Noto Sans CJK SC,sans-serif" font-size="9" fill="#7FB3D3" text-anchor="middle" letter-spacing="1">应用决策层</text>
+      <text x="596" y="46" font-family="Noto Sans CJK SC,sans-serif" font-size="8" fill="#AED6F1" text-anchor="middle">Decision Layer</text>
+      <rect x="534" y="60" width="124" height="38" rx="4" fill="#1A5276" opacity="0.9"/>
+      <text x="596" y="75" font-family="Noto Sans CJK SC,sans-serif" font-size="9" fill="white" text-anchor="middle" font-weight="bold">巡检报告自动生成</text>
+      <text x="596" y="89" font-family="Noto Sans CJK SC,sans-serif" font-size="8" fill="#AED6F1" text-anchor="middle">PDF/可视化仪表板</text>
+      <rect x="534" y="108" width="124" height="38" rx="4" fill="#1A5276" opacity="0.9"/>
+      <text x="596" y="123" font-family="Noto Sans CJK SC,sans-serif" font-size="9" fill="white" text-anchor="middle" font-weight="bold">缺陷档案数据库</text>
+      <text x="596" y="137" font-family="Noto Sans CJK SC,sans-serif" font-size="8" fill="#AED6F1" text-anchor="middle">历史趋势追溯分析</text>
+      <rect x="534" y="156" width="124" height="38" rx="4" fill="#17A589" opacity="0.9"/>
+      <text x="596" y="171" font-family="Noto Sans CJK SC,sans-serif" font-size="9" fill="white" text-anchor="middle" font-weight="bold">CMMS 对接接口</text>
+      <text x="596" y="185" font-family="Noto Sans CJK SC,sans-serif" font-size="8" fill="#D5F5E3" text-anchor="middle">维修工单自动派发</text>
+      <rect x="534" y="204" width="124" height="36" rx="4" fill="#F39C12" opacity="0.9"/>
+      <text x="596" y="226" font-family="Noto Sans CJK SC,sans-serif" font-size="9" fill="white" text-anchor="middle" font-weight="bold">预防性维护决策支持</text>
+    </svg>
+  </div>
+
+  <h3>3.2　无人机机型配置方案</h3>
+  <table>
+    <thead><tr><th>机型</th><th>负载与传感器</th><th>主要应用场景</th><th>数量建议</th></tr></thead>
+    <tbody>
+      <tr><td><strong>多旋翼精查型</strong><br><span style="font-size:8pt;color:#888;">Matrice 350 RTK 级</span></td><td>可见光4K+热成像+激光测距仪<br>载重≥2kg，续航40min</td><td>卸船机结构近距离精查、焊缝检查、热成像设备诊断</td><td class="td-center">2 架</td></tr>
+      <tr><td><strong>多旋翼通用型</strong><br><span style="font-size:8pt;color:#888;">Mavic 3E 级</span></td><td>可见光4K+5倍光学变焦<br>续航45min</td><td>输送栈桥日常巡查、储矿场边坡监测、照明设施检查</td><td class="td-center">2 架</td></tr>
+      <tr><td><strong>固定翼测绘型</strong></td><td>倾斜摄影五镜头相机<br>单次覆盖≥2km²</td><td>防波堤全线季度普查、堆场整体正射影像更新</td><td class="td-center">1 架</td></tr>
+      <tr><td><strong>机巢（自动充电）</strong></td><td>支持自动起降、充电、数据回传</td><td>固定部署于码头区域，支持自主任务执行</td><td class="td-center">2 套</td></tr>
+    </tbody>
+  </table>
+
+  <div class="page-footer">
+    <span>张家豪 · 解决方案工程师 · 2026-02</span>
+    <span>第 6 页 / 共 11 页</span>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     PAGE 7 · CHAPTER 4 - TECHNICAL DETAILS
+═══════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-header">
+    <span class="page-header-title">鼠浪湖矿石码头智能无人机巡检解决方案</span>
+    <span class="page-header-logo">第四章 · 技术详解</span>
+  </div>
+
+  <div class="section-header">
+    <div class="section-num">04</div>
+    <div class="section-title-wrap">
+      <div class="section-en">Technical Solution Details</div>
+      <div class="section-zh">技术方案详解</div>
+    </div>
+  </div>
+
+  <h3>4.1　巡检作业规划</h3>
+
+  <div class="two-col">
+    <div>
+      <h4>设施巡检频率规划</h4>
+      <table>
+        <thead><tr><th>设施</th><th>频率</th><th>飞行模式</th><th>单次时长</th></tr></thead>
+        <tbody>
+          <tr><td>卸船机结构</td><td>月度</td><td>近距精查</td><td>约45 min/台</td></tr>
+          <tr><td>输送栈桥</td><td>月度</td><td>沿线飞行</td><td>约60 min</td></tr>
+          <tr><td>防波堤全线</td><td>季度</td><td>固定翼普查</td><td>约30 min</td></tr>
+          <tr><td>防波堤重点段</td><td>月度</td><td>低空精查</td><td>约40 min</td></tr>
+          <tr><td>储矿场边坡</td><td>月度</td><td>正射影像</td><td>约50 min</td></tr>
+          <tr><td>台风后应急</td><td>按需</td><td>全场快速扫描</td><td>约2 h</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div>
+      <h4>飞行安全管理要点</h4>
+      <ul class="custom-list">
+        <li>作业区划定隔离区，与卸船机作业错时协调（配合港口调度作业计划）；</li>
+        <li>飞行高度不超过60米（码头区域），与卸船机最高点28m保持安全间距；</li>
+        <li>对接中国民航UTMISS系统，作业前提交飞行计划并获取确认；</li>
+        <li>机巢部署于非作业干扰区，避开港口起重机械作业范围；</li>
+        <li>台风/大风（>10m/s）天气自动限飞，切换为机巢等待模式；</li>
+        <li>双机协同作业时采用分区隔离策略，防止飞行干扰。</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>4.2　AI 智能缺陷识别</h3>
+
+  <p>系统内置专用于港口钢结构及混凝土基础设施的视觉缺陷识别模型，支持以下缺陷类型的自动检测与等级评分：</p>
+
+  <table>
+    <thead><tr><th>缺陷类型</th><th>检测目标部位</th><th>识别精度</th><th>处置建议触发</th></tr></thead>
+    <tbody>
+      <tr><td>钢结构锈蚀</td><td>卸船机悬臂、栈桥托架、连接件</td><td>≥90%</td><td>锈蚀面积>5%触发二级预警</td></tr>
+      <tr><td>焊缝裂缝</td><td>主梁连接节点、支撑杆件</td><td>≥88%</td><td>任何可见裂缝触发一级预警</td></tr>
+      <tr><td>混凝土裂缝/剥落</td><td>防波堤墩台、基础结构</td><td>≥92%</td><td>缝宽>0.3mm进入维修计划</td></tr>
+      <tr><td>护坡块石位移</td><td>防波堤斜坡护面</td><td>≥87%</td><td>位移量>15cm触发预警</td></tr>
+      <tr><td>坡面沉降形变</td><td>储矿场边坡</td><td>差分分析</td><td>季度对比超阈值告警</td></tr>
+      <tr><td>螺栓/连接件松动</td><td>输送机械支架、照明塔</td><td>≥85%</td><td>角度偏差>3°触发检查工单</td></tr>
+    </tbody>
+  </table>
+
+  <h3>4.3　数据管理与报告平台</h3>
+
+  <div class="two-col">
+    <div>
+      <h4>平台核心功能</h4>
+      <ul class="custom-list">
+        <li><strong>GIS可视化：</strong>在码头平面图上标注缺陷位置，支持点击查看详情照片与历史记录；</li>
+        <li><strong>缺陷档案：</strong>每处缺陷建立独立档案，记录首次发现时间、发展趋势、处置历史；</li>
+        <li><strong>自动报告：</strong>每次巡检结束后24小时内自动生成PDF巡检报告，包含缺陷列表、图像证据、处置建议；</li>
+        <li><strong>预警推送：</strong>一级预警自动推送至安全管理员手机，确保人工响应在4小时内启动；</li>
+        <li><strong>CMMS对接：</strong>预留标准API接口，维修工单可自动写入港口CMMS系统，无需人工二次录入。</li>
+      </ul>
+    </div>
+    <div>
+      <h4>数据安全保障</h4>
+      <ul class="custom-list">
+        <li>所有影像数据存储于港口内部私有云，不经过公网传输；</li>
+        <li>访问权限按角色分级（检查员/工程师/管理层），操作日志全程留存；</li>
+        <li>数据备份策略：本地+异地双备份，RTO≤4小时；</li>
+        <li>设备固件和数据均通过国密算法加密，符合港口信息安全等保二级要求。</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span>张家豪 · 解决方案工程师 · 2026-02</span>
+    <span>第 7 页 / 共 11 页</span>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     PAGE 8 · CHAPTER 5 - IMPLEMENTATION
+═══════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-header">
+    <span class="page-header-title">鼠浪湖矿石码头智能无人机巡检解决方案</span>
+    <span class="page-header-logo">第五章 · 实施计划</span>
+  </div>
+
+  <div class="section-header">
+    <div class="section-num">05</div>
+    <div class="section-title-wrap">
+      <div class="section-en">12-Week Implementation Plan</div>
+      <div class="section-zh">实施计划（12周）</div>
+    </div>
+  </div>
+
+  <p>本方案将部署工作划分为三个阶段，总计12周完成从签约到正式交付的全部工作，确保对港口正常运营零干扰。</p>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:4mm;margin:4mm 0;">
+    <div style="background:#0D2B4E;color:white;padding:4mm;border-radius:3px;">
+      <div style="font-size:8pt;color:#7FB3D3;margin-bottom:2mm;">第一阶段 · 第1-4周</div>
+      <div style="font-size:10.5pt;font-weight:800;color:#F39C12;margin-bottom:2mm;">准备与规划</div>
+      <div style="font-size:8.5pt;color:#AED6F1;line-height:1.7;">现场勘查 / 飞行报备 / 三维建模 / 航线规划 / 人员培训</div>
+    </div>
+    <div style="background:#1A5276;color:white;padding:4mm;border-radius:3px;">
+      <div style="font-size:8pt;color:#7FB3D3;margin-bottom:2mm;">第二阶段 · 第5-8周</div>
+      <div style="font-size:10.5pt;font-weight:800;color:#F39C12;margin-bottom:2mm;">系统部署</div>
+      <div style="font-size:8.5pt;color:#AED6F1;line-height:1.7;">设备安装 / 机巢调试 / 平台部署 / AI模型加载 / 试飞验证</div>
+    </div>
+    <div style="background:#1E8449;color:white;padding:4mm;border-radius:3px;">
+      <div style="font-size:8pt;color:#A9DFBF;margin-bottom:2mm;">第三阶段 · 第9-12周</div>
+      <div style="font-size:10.5pt;font-weight:800;color:#F39C12;margin-bottom:2mm;">联调与交付</div>
+      <div style="font-size:8.5pt;color:#D5F5E3;line-height:1.7;">全场联合演练 / 精度验收 / 文档交付 / 运营人员认证</div>
+    </div>
+  </div>
+
+  <h3>甘特图（12周实施计划）</h3>
+
+  <div class="gantt-wrap">
+    <div class="gantt-weeks">
+      <div></div>
+      <div class="gantt-weeks-inner">
+        <div class="gantt-week-label">W1</div><div class="gantt-week-label">W2</div>
+        <div class="gantt-week-label">W3</div><div class="gantt-week-label">W4</div>
+        <div class="gantt-week-label">W5</div><div class="gantt-week-label">W6</div>
+        <div class="gantt-week-label">W7</div><div class="gantt-week-label">W8</div>
+        <div class="gantt-week-label">W9</div><div class="gantt-week-label">W10</div>
+        <div class="gantt-week-label">W11</div><div class="gantt-week-label">W12</div>
+      </div>
+    </div>
+
+    <!-- Row: 现场踏勘与测量 -->
+    <div class="gantt-row">
+      <div class="gantt-label">现场踏勘与测量</div>
+      <div class="gantt-bar-wrap">
+        <div class="gantt-active"></div><div class="gantt-active"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
+        <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
+        <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
+      </div>
+    </div>
+    <div class="gantt-row">
+      <div class="gantt-label">飞行报备与合规审批</div>
+      <div class="gantt-bar-wrap">
+        <div class="gantt-cell"></div><div class="gantt-active"></div><div class="gantt-active"></div><div class="gantt-active"></div>
+        <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
+        <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
+      </div>
+    </div>
+    <div class="gantt-row">
+      <div class="gantt-label">三维建模与航线规划</div>
+      <div class="gantt-bar-wrap">
+        <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-active"></div><div class="gantt-active"></div>
+        <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
+        <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
+      </div>
+    </div>
+    <div class="gantt-row">
+      <div class="gantt-label">运营人员培训（基础）</div>
+      <div class="gantt-bar-wrap">
+        <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-active"></div>
+        <div class="gantt-active"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
+        <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
+      </div>
+    </div>
+    <div class="gantt-row">
+      <div class="gantt-label">无人机设备安装调试</div>
+      <div class="gantt-bar-wrap">
+        <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
+        <div class="gantt-active-2"></div><div class="gantt-active-2"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
+        <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
+      </div>
+    </div>
+    <div class="gantt-row">
+      <div class="gantt-label">机巢部署与网络接入</div>
+      <div class="gantt-bar-wrap">
+        <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
+        <div class="gantt-cell"></div><div class="gantt-active-2"></div><div class="gantt-active-2"></div><div class="gantt-cell"></div>
+        <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
+      </div>
+    </div>
+    <div class="gantt-row">
+      <div class="gantt-label">数据平台部署与配置</div>
+      <div class="gantt-bar-wrap">
+        <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
+        <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-active-2"></div><div class="gantt-active-2"></div>
+        <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
+      </div>
+    </div>
+    <div class="gantt-row">
+      <div class="gantt-label">AI模型加载与标定</div>
+      <div class="gantt-bar-wrap">
+        <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
+        <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-active-2"></div>
+        <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
+      </div>
+    </div>
+    <div class="gantt-row">
+      <div class="gantt-label">全场联合试飞验证</div>
+      <div class="gantt-bar-wrap">
+        <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
+        <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
+        <div class="gantt-active-3"></div><div class="gantt-active-3"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
+      </div>
+    </div>
+    <div class="gantt-row">
+      <div class="gantt-label">精度与识别率验收</div>
+      <div class="gantt-bar-wrap">
+        <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
+        <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
+        <div class="gantt-cell"></div><div class="gantt-active-3"></div><div class="gantt-active-3"></div><div class="gantt-cell"></div>
+      </div>
+    </div>
+    <div class="gantt-row">
+      <div class="gantt-label">运营人员上岗认证</div>
+      <div class="gantt-bar-wrap">
+        <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
+        <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
+        <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-active-3"></div><div class="gantt-cell"></div>
+      </div>
+    </div>
+    <div class="gantt-row">
+      <div class="gantt-label" style="color:#D35400;font-weight:800;">正式交付与移交</div>
+      <div class="gantt-bar-wrap">
+        <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
+        <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
+        <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-active-4"></div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:8mm;margin-top:3mm;font-size:8pt;color:#888;flex-wrap:wrap;">
+    <span><span style="display:inline-block;width:12px;height:8px;background:#2471A3;margin-right:3px;"></span>准备与规划</span>
+    <span><span style="display:inline-block;width:12px;height:8px;background:#2E86C1;margin-right:3px;"></span>系统部署</span>
+    <span><span style="display:inline-block;width:12px;height:8px;background:#1E8449;margin-right:3px;"></span>联调与验收</span>
+    <span><span style="display:inline-block;width:12px;height:8px;background:#D35400;margin-right:3px;"></span>正式交付</span>
+  </div>
+
+  <h3>关键里程碑</h3>
+  <table style="margin-top:3mm;">
+    <thead><tr><th>里程碑</th><th>时间节点</th><th>验收标准</th><th>责任方</th></tr></thead>
+    <tbody>
+      <tr><td>M1 · 航线规划方案确认</td><td>第4周末</td><td>覆盖全部巡检点位，通过港口调度确认</td><td>方案商 + 港口调度</td></tr>
+      <tr><td>M2 · 设备安装完成</td><td>第7周末</td><td>所有设备通电自检100%通过</td><td>方案商</td></tr>
+      <tr><td>M3 · AI模型验收</td><td>第10周末</td><td>预置测试集缺陷识别率≥88%</td><td>双方技术负责人</td></tr>
+      <tr><td>M4 · 系统正式交付</td><td>第12周末</td><td>完成全部验收清单，操作人员获得认证</td><td>方案商 + 港口安全部</td></tr>
+    </tbody>
+  </table>
+
+  <div class="page-footer">
+    <span>张家豪 · 解决方案工程师 · 2026-02</span>
+    <span>第 8 页 / 共 11 页</span>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     PAGE 9-10 · CHAPTER 6 - ROI
+═══════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-header">
+    <span class="page-header-title">鼠浪湖矿石码头智能无人机巡检解决方案</span>
+    <span class="page-header-logo">第六章 · 投资回报分析</span>
+  </div>
+
+  <div class="section-header">
+    <div class="section-num">06</div>
+    <div class="section-title-wrap">
+      <div class="section-en">Return on Investment Analysis</div>
+      <div class="section-zh">投资回报分析（ROI）</div>
+    </div>
+  </div>
+
+  <h3>6.1　系统建设成本（一次性投入）</h3>
+  <table>
+    <thead><tr><th>成本项目</th><th>规格/说明</th><th>单价（万元）</th><th>数量</th><th>小计（万元）</th></tr></thead>
+    <tbody>
+      <tr><td>精查型多旋翼无人机</td><td>含热成像+激光测距模块</td><td class="td-right">28</td><td class="td-center">2</td><td class="td-right">56</td></tr>
+      <tr><td>通用型多旋翼无人机</td><td>含变焦镜头</td><td class="td-right">8</td><td class="td-center">2</td><td class="td-right">16</td></tr>
+      <tr><td>固定翼测绘无人机</td><td>五镜头倾斜相机</td><td class="td-right">35</td><td class="td-center">1</td><td class="td-right">35</td></tr>
+      <tr><td>自动机巢系统</td><td>含充电、数据回传模块</td><td class="td-right">18</td><td class="td-center">2</td><td class="td-right">36</td></tr>
+      <tr><td>AI巡检数据管理平台</td><td>私有化部署，含3年授权</td><td class="td-right">45</td><td class="td-center">1</td><td class="td-right">45</td></tr>
+      <tr><td>安装调试与培训</td><td>12周现场服务</td><td class="td-right">18</td><td class="td-center">1</td><td class="td-right">18</td></tr>
+      <tr><td>网络与基础设施改造</td><td>5G CPE、局域网、机巢基础</td><td class="td-right">12</td><td class="td-center">1</td><td class="td-right">12</td></tr>
+      <tr class="total-row"><td colspan="4"><strong>一次性建设总投入</strong></td><td class="td-right"><strong>218万元</strong></td></tr>
+    </tbody>
+  </table>
+
+  <h3>6.2　年度运营成本（持续投入）</h3>
+  <table>
+    <thead><tr><th>运营成本项</th><th>说明</th><th>年度金额（万元）</th></tr></thead>
+    <tbody>
+      <tr><td>飞手/系统管理员人力</td><td>现有安全人员培训后兼任，增量1人</td><td class="td-right">15</td></tr>
+      <tr><td>设备维护与易损件更换</td><td>桨叶、电池、镜头等年均消耗</td><td class="td-right">8</td></tr>
+      <tr><td>平台服务与AI模型更新</td><td>年度维保及模型迭代</td><td class="td-right">10</td></tr>
+      <tr><td>飞行保险</td><td>第三者责任险</td><td class="td-right">2</td></tr>
+      <tr class="total-row"><td colspan="2"><strong>年度运营成本合计</strong></td><td class="td-right"><strong>35万元/年</strong></td></tr>
+    </tbody>
+  </table>
+
+  <h3>6.3　年度效益测算</h3>
+  <table>
+    <thead><tr><th>效益来源</th><th>测算逻辑</th><th>年度节省（万元）</th></tr></thead>
+    <tbody>
+      <tr><td>减少高空人工巡检</td><td>4台卸船机×月检1次×6人×8h×250元/人天×12月，节省85%</td><td class="td-right">≈82</td></tr>
+      <tr><td>减少脚手架外包</td><td>现有外包约60万元/年，节省90%</td><td class="td-right">≈54</td></tr>
+      <tr><td>防波堤步行巡检替代</td><td>季度4次×2人×4h×250元，节省100%</td><td class="td-right">≈12</td></tr>
+      <tr><td>减少计划外停工</td><td>提前发现缺陷→计划维修，预计减少1次/年停工，每次约200万损失，实现率70%</td><td class="td-right">≈140</td></tr>
+      <tr><td>提升巡检覆盖频率</td><td>月度覆盖频率提升→早期缺陷发现→维修成本降低，保守估算间接节省</td><td class="td-right">≈80</td></tr>
+      <tr class="highlight-row"><td colspan="2"><strong>年度综合效益合计</strong></td><td class="td-right"><strong>≈368万元/年</strong></td></tr>
+    </tbody>
+  </table>
+
+  <div class="roi-summary" style="margin-top:5mm;">
+    <h4>ROI 核心结论</h4>
+    <div class="roi-grid">
+      <div class="roi-item">
+        <label>一次性建设投入</label>
+        <span>218<small>万元</small></span>
+      </div>
+      <div class="roi-item">
+        <label>年净效益（效益-运营成本）</label>
+        <span>333<small>万元/年</small></span>
+      </div>
+      <div class="roi-item">
+        <label>预计投资回收期</label>
+        <span>≈ 1.8<small>年</small></span>
+      </div>
+    </div>
+  </div>
+
+  <h3>6.4　5年总拥有成本对比（TCO）</h3>
+  <table>
+    <thead><tr><th>对比维度</th><th>传统人工模式（5年）</th><th>无人机智能巡检（5年）</th><th>节省/增益</th></tr></thead>
+    <tbody>
+      <tr><td>直接成本（人力+外包）</td><td>840万元</td><td>218 + 35×5 = 393万元</td><td>节省447万元</td></tr>
+      <tr><td>计划外停工损失</td><td>~600万元（3次）</td><td>~200万元（1次，早期干预）</td><td>节省400万元</td></tr>
+      <tr><td>安全事故风险暴露</td><td>高（高空作业密集）</td><td>低（人工高空作业减少85%）</td><td>不可量化的安全价值</td></tr>
+      <tr class="total-row"><td><strong>5年TCO合计对比</strong></td><td><strong>~1,440万元</strong></td><td><strong>~593万元</strong></td><td><strong>净节省约847万元</strong></td></tr>
+    </tbody>
+  </table>
+
+  <p class="note">* 上述测算基于行业公开数据和宁波舟山港基础信息估算，实际数据在正式项目中将基于客户现有财务数据进行精确测算。</p>
+
+  <div class="page-footer">
+    <span>张家豪 · 解决方案工程师 · 2026-02</span>
+    <span>第 9-10 页 / 共 11 页</span>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     PAGE 11 · APPENDIX & REFERENCES
+═══════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-header">
+    <span class="page-header-title">鼠浪湖矿石码头智能无人机巡检解决方案</span>
+    <span class="page-header-logo">附录 · 标准与参考</span>
+  </div>
+
+  <div class="section-header">
+    <div class="section-num">A</div>
+    <div class="section-title-wrap">
+      <div class="section-en">Appendix &amp; References</div>
+      <div class="section-zh">附录：相关标准与参考资料</div>
+    </div>
+  </div>
+
+  <h3>A.1　适用政策与法规</h3>
+  <table>
+    <thead><tr><th>文件名称</th><th>发布机构</th><th>相关性说明</th></tr></thead>
+    <tbody>
+      <tr><td>《无人驾驶航空器飞行管理暂行条例》</td><td>国务院/中央军委，2024年1月</td><td>规定港口区域无人机飞行申报程序及运营资质要求</td></tr>
+      <tr><td>《港口安全生产数字化转型行动方案》</td><td>交通运输部，2023年</td><td>明确要求主要港口在2025年底前建立在线设施监测能力</td></tr>
+      <tr><td>《特种设备安全法》</td><td>全国人大，2013年修订</td><td>规定港口起重设备须进行定期专项检验</td></tr>
+      <tr><td>《民用无人驾驶航空器系统安全要求》(GB42590)</td><td>国家标准化委员会，2023年</td><td>无人机设备本体合规要求</td></tr>
+      <tr><td>《港口工程技术规范》(JTS)</td><td>交通运输部，现行版</td><td>防波堤、岸墙等设施的设计与维护技术标准</td></tr>
+    </tbody>
+  </table>
+
+  <h3>A.2　行业案例参考</h3>
+  <div class="callout callout-success">
+    <strong>青岛港：</strong>2022年完成大型散货机械无人机定检系统试点，卸船机年检作业效率提升68%，高空人工作业次数减少79%，2023年推广至全部矿石作业区，获交通运输部安全生产数字化示范项目认定。
+  </div>
+  <div class="callout callout-success" style="margin-top:3mm;">
+    <strong>天津港：</strong>2023年部署无人机+AI防波堤巡检系统，覆盖28公里岸线，季度巡检成本降低72%，台风后应急评估响应从48小时缩短至4小时，累计提前发现潜在险情3处。
+  </div>
+
+  <h3>A.3　建议验收标准（供合同参考）</h3>
+  <table>
+    <thead><tr><th>验收项</th><th>验收指标</th><th>测试方法</th></tr></thead>
+    <tbody>
+      <tr><td>航线规划覆盖率</td><td>≥100%（全部指定巡检点位）</td><td>对照巡检点位清单逐一核查</td></tr>
+      <tr><td>AI缺陷识别率</td><td>综合精度≥88%（标准测试集）</td><td>采用100张已标注缺陷图像进行盲测</td></tr>
+      <tr><td>数据回传延迟</td><td>影像实时回传延迟≤3秒</td><td>现场5G环境实测</td></tr>
+      <tr><td>机巢自动作业成功率</td><td>≥95%（连续20次自主起降）</td><td>无人工介入条件下现场连续测试</td></tr>
+      <tr><td>巡检报告生成时效</td><td>巡检结束后≤24小时</td><td>完成首次全场飞行后验证</td></tr>
+      <tr><td>系统可用性</td><td>平台年可用率≥99%</td><td>参照SLA协议，试运行期30天统计</td></tr>
+    </tbody>
+  </table>
+
+  <h3>A.4　推荐下一步行动</h3>
+  <ul class="custom-list">
+    <li><strong>现场踏勘：</strong>建议在本方案确认后安排1-2天现场勘查，核实飞行障碍物分布及5G信号覆盖情况，据此精调设备配置与机巢选址；</li>
+    <li><strong>POC试验：</strong>可在确认商务框架后先行开展单设施（如1台卸船机）的概念验证飞行，用真实数据验证AI识别效果；</li>
+    <li><strong>合规预沟通：</strong>建议在签约前提前向舟山市飞行管制部门提交航空器使用计划，缩短报批周期；</li>
+    <li><strong>内部工作组：</strong>建议港口侧指定1名安全技术负责人作为对口协调人，贯通港口调度、安全、IT三部门协作。</li>
+  </ul>
+
+  <div style="margin-top:8mm;padding:5mm 6mm;border:1px solid var(--border);border-radius:4px;display:flex;justify-content:space-between;align-items:center;background:#F8FBFE;">
+    <div>
+      <div style="font-size:9pt;color:var(--navy);font-weight:700;">方案联系人</div>
+      <div style="font-size:9pt;color:#333;margin-top:1mm;">张家豪　解决方案工程师</div>
+      <div style="font-size:9pt;color:#555;margin-top:1mm;">📞 15336533618　　✉ 3180100765@zju.edu.cn</div>
+    </div>
+    <div style="text-align:right;">
+      <div style="font-size:8pt;color:var(--lgray);">文档版本</div>
+      <div style="font-size:9pt;color:var(--navy);font-weight:600;">V1.0 · 2026年2月</div>
+      <div style="font-size:8pt;color:var(--lgray);margin-top:1mm;">本文档内容保密，未经授权不得转发</div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span>张家豪 · 解决方案工程师 · 2026-02</span>
+    <span>第 11 页 / 共 11 页</span>
+  </div>
+</div>
+
+</body>
+</html>
